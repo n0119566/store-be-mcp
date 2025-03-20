@@ -1,7 +1,7 @@
-const request = require('supertest');
-const dbHandler = require('./setup');
-const { app } = require('../index');
-const { Customer } = require('../models');
+const request = require("supertest");
+const dbHandler = require("./setup");
+const { app } = require("../../server");
+const { Customer } = require("../models");
 
 let server;
 
@@ -17,56 +17,56 @@ afterAll(async () => {
   await server.close();
 });
 
-describe('Customer API', () => {
+describe("Customer API", () => {
   // Test customer data
   const sampleCustomer = {
-    name: 'John Doe',
-    email: 'john@example.com',
-    phone: '555-123-4567',
+    name: "John Doe",
+    email: "john@example.com",
+    phone: "555-123-4567",
     address: {
-      street: '123 Main St',
-      city: 'Anytown',
-      state: 'CA',
-      zip: '12345',
-      country: 'USA'
-    }
+      street: "123 Main St",
+      city: "Anytown",
+      state: "CA",
+      zip: "12345",
+      country: "USA",
+    },
   };
 
   const multipleCustomers = [
     {
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-      phone: '555-765-4321',
+      name: "Jane Smith",
+      email: "jane@example.com",
+      phone: "555-765-4321",
       address: {
-        street: '456 Oak Ave',
-        city: 'Somewhere',
-        state: 'NY',
-        zip: '67890',
-        country: 'USA'
-      }
+        street: "456 Oak Ave",
+        city: "Somewhere",
+        state: "NY",
+        zip: "67890",
+        country: "USA",
+      },
     },
     {
-      name: 'Bob Johnson',
-      email: 'bob@example.com',
-      phone: '555-987-6543',
+      name: "Bob Johnson",
+      email: "bob@example.com",
+      phone: "555-987-6543",
       address: {
-        street: '789 Pine St',
-        city: 'Nowhere',
-        state: 'TX',
-        zip: '54321',
-        country: 'USA'
-      }
-    }
+        street: "789 Pine St",
+        city: "Nowhere",
+        state: "TX",
+        zip: "54321",
+        country: "USA",
+      },
+    },
   ];
 
   // Test GET all customers
-  it('should get all customers', async () => {
+  it("should get all customers", async () => {
     // Add a test customer
     await Customer.create(sampleCustomer);
 
     // Get all customers
-    const res = await request(app).get('/api/customers');
-    
+    const res = await request(app).get("/api/customers");
+
     expect(res.statusCode).toEqual(200);
     expect(res.body.success).toBe(true);
     expect(Array.isArray(res.body.data)).toBeTruthy();
@@ -76,11 +76,9 @@ describe('Customer API', () => {
   });
 
   // Test POST a customer
-  it('should create a new customer', async () => {
-    const res = await request(app)
-      .post('/api/customers')
-      .send(sampleCustomer);
-    
+  it("should create a new customer", async () => {
+    const res = await request(app).post("/api/customers").send(sampleCustomer);
+
     expect(res.statusCode).toEqual(201);
     expect(res.body.success).toBe(true);
     expect(res.body.data.name).toEqual(sampleCustomer.name);
@@ -88,11 +86,11 @@ describe('Customer API', () => {
   });
 
   // Test POST multiple customers
-  it('should create multiple customers', async () => {
+  it("should create multiple customers", async () => {
     const res = await request(app)
-      .post('/api/customers/batch')
+      .post("/api/customers/batch")
       .send(multipleCustomers);
-    
+
     expect(res.statusCode).toEqual(201);
     expect(res.body.success).toBe(true);
     expect(Array.isArray(res.body.data)).toBeTruthy();
