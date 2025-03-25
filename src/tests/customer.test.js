@@ -98,4 +98,25 @@ describe("Customer API", () => {
     expect(res.body.data[0].name).toEqual(multipleCustomers[0].name);
     expect(res.body.data[1].name).toEqual(multipleCustomers[1].name);
   });
+
+  // Test GET customers by name (partial match)
+  it("should get customers by partial name match", async () => {
+    // Add test customers
+    await Customer.create(sampleCustomer); // John Doe
+    await Customer.insertMany(multipleCustomers); // Jane Smith, Bob Johnson
+
+    // Test partial match for "oh" - should match "John Doe" and "Bob Johnson"
+    const res = await request(app).get("/api/customers?name=oh");
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.success).toBe(true);
+    expect(Array.isArray(res.body.data)).toBeTruthy();
+    expect(res.body.data.length).toEqual(2);
+    
+    // Check that we got the expected customers
+    const names = res.body.data.map(customer => customer.name);
+    expect(names).toContain("John Doe");
+    expect(names).toContain("Bob Johnson");
+    expect(names).not.toContain("Jane Smith");
+  });
 });

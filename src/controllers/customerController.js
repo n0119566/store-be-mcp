@@ -10,6 +10,26 @@ const getAllCustomers = async (req, res) => {
   }
 };
 
+// Get customers by name (partial match)
+const getCustomersByName = async (req, res) => {
+  try {
+    const name = req.query.name;
+    
+    if (!name) {
+      return res.status(400).json({ success: false, error: 'Name parameter is required' });
+    }
+    
+    // Use regex for case-insensitive partial matches
+    const customers = await Customer.find({ 
+      name: { $regex: name, $options: 'i' } 
+    });
+    
+    res.status(200).json({ success: true, count: customers.length, data: customers });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 // Get customer by ID
 const getCustomerById = async (req, res) => {
   try {
@@ -69,6 +89,7 @@ const addMultipleCustomers = async (req, res) => {
 module.exports = {
   getAllCustomers,
   getCustomerById,
+  getCustomersByName,
   getCustomerOrders,
   addCustomer,
   addMultipleCustomers

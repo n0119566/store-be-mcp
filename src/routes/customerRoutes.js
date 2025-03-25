@@ -1,9 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { getAllCustomers, getCustomerById, getCustomerOrders, addCustomer, addMultipleCustomers } = require('../controllers/customerController');
+const { getAllCustomers, getCustomerById, getCustomersByName, getCustomerOrders, addCustomer, addMultipleCustomers } = require('../controllers/customerController');
 
-// Get all customers
-router.get('/', getAllCustomers);
+// Get all customers or search by name
+router.get('/', (req, res) => {
+  if (req.query.name) {
+    return getCustomersByName(req, res);
+  }
+  return getAllCustomers(req, res);
+});
 
 // Get customer by ID
 router.get('/:id', getCustomerById);
